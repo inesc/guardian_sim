@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+<!--    <param name="robot_description" command="$(find xacro)/xacro.py '$(find guardian_description)/urdf/v7/guardian_tracks_laser_up.urdf.xacro'" /> -->
+   <param name="robot_description" command="$(find xacro)/xacro.py '$(find guardian_description)/urdf/v7/guardian_wheels_laser_up.urdf.xacro'" />
+</launch>

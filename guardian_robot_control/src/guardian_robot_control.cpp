@@ -309,8 +309,8 @@ GuardianControllerClass(ros::NodeHandle h) : diagnostic_(),
   cmd_sub_ = guardian_robot_control_node_handle.subscribe<geometry_msgs::Twist>("command", 1, &GuardianControllerClass::commandCallback, this);
 
   // Subscribe to ptz command topic
-  ptz_sub_ = guardian_robot_control_node_handle.subscribe<robotnik_msgs::ptz>("command_ptz", 1, &GuardianControllerClass::command_ptzCallback, this);
-  // /guardian_robot_control/command_ptz
+  ptz_sub_ = guardian_robot_control_node_handle.subscribe<robotnik_msgs::ptz>("/guardian/command_ptz", 1, &GuardianControllerClass::command_ptzCallback, this);
+  // /guardian/command_ptz
   
   // TODO odom topic as parameter
   // Publish odometry 

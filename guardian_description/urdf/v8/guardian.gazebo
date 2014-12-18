@@ -21,10 +21,10 @@
     <wheelDiameter>0.300</wheelDiameter>
     <robotBaseFrame>base_link</robotBaseFrame>
     <torque>20</torque>
-    <topicName>cmd_vel</topicName>
+    <topicName>/guardian/cmd_vel</topicName>
     
-    <commandTopic>cmd_vel</commandTopic>
-    <odometryTopic>odom</odometryTopic>
+    <commandTopic>/guardian/cmd_vel</commandTopic>
+    <odometryTopic>/guardian/odom</odometryTopic>
     <odometryFrame>odom</odometryFrame>
     
     <!-- broadcastTF>false</broadcastTF -->
@@ -134,7 +134,7 @@
       </ray>
       <!-- plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so" -->
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-        <topicName>/scan</topicName>
+        <topicName>/guardian/laser_tilt_front</topicName>
         <frameName>hokuyo_laser_link</frameName>
       </plugin>
     </sensor>

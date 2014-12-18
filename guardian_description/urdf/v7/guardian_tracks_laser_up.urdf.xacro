@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
-<robot name="gball" xmlns:xacro="http://www.ros.org/wiki/xacro"> 
+<robot name="guardian_tracks" xmlns:xacro="http://www.ros.org/wiki/xacro"> 
 
   <!-- Import all Gazebo-customization elements, including Gazebo colors -->
   <xacro:include filename="$(find guardian_description)/urdf/v7/guardian.gazebo" />
-<!--   <xacro:include filename="$(find guardian_description)/urdf/sensors/kinect.urdf.xacro"/> -->
 
 
   <!-- Robot mechanical and motor parameters -->
@@ -24,7 +23,9 @@
   <xacro:property name="ptz_joint_damping" value="0.1" />
   <xacro:property name="ptz_mechanical_reduction" value="1.0" />
 
-  
+  <xacro:property name="laser_offset_x" value="-0.048" /> 
+  <xacro:property name="laser_offset_z" value="0.06" /> 
+
   <!-- Used for fixing robot to Gazebo 'base_link' -->
   <!-- link name="world"/>
   <joint name="fwf" type="planar">
@@ -43,19 +44,19 @@
           </geometry>
       </visual>
 
-      <collision>
+     <!--  <collision>
           <origin xyz="0 0 0" rpy="0 0 0" />
           <geometry>
             <box size="0.001 0.001 0.001" />
          </geometry>
-     </collision>
+     </collision> -->
   </link>
 
   <joint name="base_footprint_joint" type="fixed">
      <!--NB: While you would think this would make it go up, it is oddly reversed.
       This moves the joint to 0,0,0 where we want it for rviz, etc. -->
      <!-- origin xyz="0 0 0.130" rpy="0 0 0" / -->
-     <origin xyz="0 0 0.18" rpy="0 0 0" />
+     <origin xyz="0 0 0.069" rpy="0 0 0" />
      <parent link="base_footprint"/>
      <child link="base_link" />
   </joint>
@@ -71,13 +72,16 @@
     <visual>
        <origin xyz="0 0 0" rpy="0 0 0" />
        <geometry>
-	 <mesh filename="package://guardian_description/meshes/chassis/v7/chassisV7.dae"/>
+	 		<mesh filename="package://guardian_description/meshes/chassis/v7/chassisV7.stl"/>
        </geometry>
+       <material name="DarkGrey">
+			<color rgba="0.4 0.4 0.4 1.0" />
+		</material>
     </visual>
     <collision>
        <origin xyz="0 0 0" rpy="0 0 0 " />
        <geometry>
-         <mesh filename="package://guardian_description/meshes/chassis/v7/chassisV7.dae"/>
+         <mesh filename="package://guardian_description/meshes/chassis/v7/chassisV7.stl"/>
        </geometry>
     </collision>     
   </link>
@@ -93,7 +97,7 @@
     <visual>
         <origin xyz="0 0 0" rpy="0 0 0" /> 
         <geometry>
-	 <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+	 <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.stl"/>
         </geometry>
 	<material name="black">
   		<color rgba="0.1 0.1 0.1 1"/>
@@ -102,7 +106,7 @@
     <collision>
        <origin xyz="0 0 0" rpy="0 0 0" />
        <geometry>
-         <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+         <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.stl"/>
        </geometry>
     </collision>
   </link>
@@ -125,16 +129,16 @@
     <visual>
        <origin xyz="0 0 0" rpy="0 0 0" /> 
        <geometry>
-	 	 <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+	 <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.stl"/>
        </geometry>
-	   <material name="black">
-		 <color rgba="0.1 0.1 0.1 1"/>
-       </material>
+	<material name="black">
+		<color rgba="0.1 0.1 0.1 1"/>
+      	</material>
     </visual>
     <collision>
        <origin xyz="0 0 0" rpy="0 0 0" />
        <geometry>
-         <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.dae"/>
+         <mesh filename="package://guardian_description/meshes/others/v5/trackV5_l.stl"/>
        </geometry>
     </collision>
   </link>
@@ -146,191 +150,6 @@
     <origin xyz="0.0 0.0 0.0" rpy="0 0 3.1415926535" /> 
   </joint>
 
-  <!-- BACK LEFT WHEEL (GREY) -->
-  <link name="back_left_wheel">
-    <inertial>
-      <mass value="4.5" />
-      <origin xyz="0 0 0" rpy="0 0 3.1416"/> 
-      <inertia  ixx="0.059" ixy="0.0"  ixz="0.0"  iyy="0.055"  iyz="0.0"  izz="0.059" />
-    </inertial>
-    <visual>
-       <origin xyz="0 0 0" rpy="0 0 3.1416" /> 
-       <geometry>
-	 	 <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-	   <material name="grey">
-		 <color rgba="0.3 0.3 0.3 1"/>
-       </material>
-    </visual>
-    <collision>
-       <origin xyz="0 0 0" rpy="0 0 3.1416" />
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-    </collision>
-  </link>
-
-  <joint name="joint_back_left_wheel" type="continuous">
-    <parent link="base_link"/>
-    <child link="back_left_wheel"/>
-    <origin xyz="-${wheel_offset_x} ${wheel_offset_y} 0" rpy="0 0 0" /> 
-    <axis xyz="0 1 0" rpy="0 0 0" />
-    <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
-    <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
-  </joint>
-
-  <transmission name="joint_blw_trans">
-	 <type>transmission_interface/SimpleTransmission</type>
-     <joint name="joint_back_left_wheel" />
-     <actuator name="joint_blw_motor">
-	    <hardwareInterface>EffortJointInterface</hardwareInterface>
-		<!-- hardwareInterface>VelocityJointInterface</hardwareInterface -->
-        <mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
-     	<!-- motorTorqueConstant>1</motorTorqueConstant -->
-     </actuator>
-  </transmission>
-
-  <!-- BACK RIGHT WHEEL (BLACK) -->
-  <link name="back_right_wheel">
-    <inertial>
-      <mass value="4.5" />
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia  ixx="0.059" ixy="0.0"  ixz="0.0"  iyy="0.055"  iyz="0.0"  izz="0.059" />
-    </inertial>
-
-    <visual>
-       <origin xyz="0 0 0" rpy="0 0 0" /> 
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-	   <material name="gray">
-		 <color rgba="0.3 0.3 0.3 1"/>
-       </material>
-    </visual>
-    <collision>
-       <origin xyz="0 0 0" rpy="0 0 0" /> 
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-    </collision>
-  </link>
-
-  <joint name="joint_back_right_wheel" type="continuous">
-    <parent link="base_link"/>
-    <child link="back_right_wheel"/>
-    <origin xyz="-${wheel_offset_x} -${wheel_offset_y} 0" rpy="0 0 0" /> 
-    <axis xyz="0 1 0" rpy="0 0 0" />
-    <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
-    <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
-  </joint>
-
-  <transmission name="joint_brw_trans">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint_back_right_wheel" />
-    <actuator name="joint_brw_motor">
-	   <hardwareInterface>EffortJointInterface</hardwareInterface>
-       <!-- hardwareInterface>VelocityJointInterface</hardwareInterface -->
-       <mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
-	   <!-- motorTorqueConstant>1</motorTorqueConstant -->
-    </actuator>
-  </transmission>
-
-  <!-- FRONT LEFT WHEEL (GREY) -->
-  <link name="front_left_wheel">
-    <inertial>
-      <mass value="4.5" />
-      <origin xyz="0 0 0" rpy="0 0 3.1416"/>
-      <inertia  ixx="0.059" ixy="0.0"  ixz="0.0"  iyy="0.055"  iyz="0.0"  izz="0.059" />
-    </inertial>
-    
-    <visual>
-       <origin xyz="0 0 0" rpy="0 0 3.1416" /> 
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-	   <material name="grey">
-		 <color rgba="0.3 0.3 0.3 1"/>
-       </material>
-    </visual>
-    <collision>
-       <origin xyz="0 0 0" rpy="0 0 3.1416" /> 
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-    </collision>
-  </link>
-
-  <joint name="joint_front_left_wheel" type="continuous">
-    <parent link="base_link"/>
-    <child link="front_left_wheel"/>
-    <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="0 0 0" /> 
-    <axis xyz="0 1 0" rpy="0 0 0" />
-    <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
-    <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
-  </joint>
-
-  <transmission name="joint_flw_trans">
-	 <type>transmission_interface/SimpleTransmission</type>
-     <joint name="joint_front_left_wheel" />
-     <actuator name="joint_flw_motor">
-	   <hardwareInterface>EffortJointInterface</hardwareInterface>
-       <!-- hardwareInterface>VelocityJointInterface</hardwareInterface -->
-       <mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
-       <!-- motorTorqueConstant>1</motorTorqueConstant -->
-     </actuator>     
-  </transmission>
-
-
-  <!-- FRONT RIGHT WHEEL (GREY) -->
-  <link name="front_right_wheel">
-    <inertial>
-      <mass value="4.5" />
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia  ixx="0.059" ixy="0.0"  ixz="0.0"  iyy="0.055"  iyz="0.0"  izz="0.059" />
-    </inertial>
-
-    <visual>
-       <origin xyz="0 0 0" rpy="0 0 0" /> 
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/>
-       </geometry>
-	   <material name="grey">
-		 <color rgba="0.3 0.3 0.3 1"/>
-       </material>
-    </visual>
-    <collision>
-       <origin xyz="0 0 0" rpy="0 0 0" /> 
-       <geometry>
-         <mesh filename="package://guardian_description/meshes/wheel.dae"/> 
-       </geometry>
-    </collision>
-  </link>
-
-  <joint name="joint_front_right_wheel" type="continuous">
-    <parent link="base_link"/>
-    <child link="front_right_wheel"/>
-    <origin xyz="${wheel_offset_x} -${wheel_offset_y} 0" rpy="0 0 0" /> 
-    <axis xyz="0 1 0" rpy="0 0 0" />
-    <limit effort="${wheel_joint_effort_limit}" velocity="${wheel_joint_velocity_limit}"/>
-    <joint_properties damping="${wheel_joint_damping}" friction="{wheel_joint_friction}"/>
-  </joint>
-
-
-  <transmission name="joint_frw_trans">
-	 <type>transmission_interface/SimpleTransmission</type>
-     <joint name="joint_front_right_wheel" />
-     <actuator name="joint_frw_motor">
-	   <hardwareInterface>EffortJointInterface</hardwareInterface>
-	   <!-- hardwareInterface>VelocityJointInterface</hardwareInterface -->    
-       <mechanicalReduction>${wheel_mechanical_reduction}</mechanicalReduction>
-       <!-- motorTorqueConstant>1</motorTorqueConstant -->
-     </actuator>
-     <!-- motorTorqueConstant>1</motorTorqueConstant -->
-  </transmission>
-
-
-
-<!-- 	<sensor_kinect  parent="base_link"/> -->
 
   <!-- HOKUYO BACK SENSOR -->
   <joint name="hokuyo_back_laser_joint" type="fixed">
@@ -361,7 +180,8 @@
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
-  
+
+
   <joint name="laser_tilt_mount_joint" type="fixed">
      <axis xyz="0 1 0" />
      <origin xyz="0.46781 0 0.24299"/>
@@ -380,8 +200,8 @@
      <limit effort="30" lower="-2.6" upper="2.6" velocity="2.0"/>
 	 <dynamics damping="100"/>
   </joint>
-  <link name="laser_tilt_mount_inverted_link">
-    
+  
+  <link name="laser_tilt_mount_inverted_link">  
   </link-->
   
   <!-- HOKUYO FRONTAL ROTATION -->
@@ -424,7 +244,7 @@
   <!-- HOKUYO FRONTAL SENSOR -->
   <joint name="hokuyo_frontal_laser_joint" type="fixed">
      <axis xyz="0 1 0" />
-     <origin xyz="0.066 0 0.0"/>
+     <origin xyz="${laser_offset_x+0.066} 0 ${laser_offset_z}"/>
      <parent link="laser_tilt_link"/>
      <child link="hokuyo_frontal_laser_link"/>
   </joint>
